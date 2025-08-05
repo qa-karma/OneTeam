@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   description: 'Manage private soccer training sessions, bookings, and player development with ease',
   keywords: ['soccer', 'training', 'coaching', 'sports', 'management'],
   authors: [{ name: 'OneTeam' }],
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({

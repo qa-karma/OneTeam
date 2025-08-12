@@ -5,6 +5,7 @@ import Navigation from '@/components/Navigation'
 import Dashboard from '@/components/Dashboard'
 import PlayersSection from '@/components/PlayersSection'
 import SlotsSection from '@/components/SlotsSection'
+import CalendarView from '@/components/CalendarView'
 import BookingsSection from '@/components/BookingsSection'
 import FeedbackSection from '@/components/FeedbackSection'
 import ChatSection from '@/components/ChatSection'
@@ -12,7 +13,7 @@ import { coachStorage } from '@/utils/localStorage'
 import { initializeDemoData, addCompletedBookingForFeedback } from '@/utils/demoData'
 import { Coach } from '@/types'
 
-type ActiveTab = 'dashboard' | 'players' | 'slots' | 'bookings' | 'feedback' | 'chat'
+type ActiveTab = 'dashboard' | 'players' | 'slots' | 'calendar' | 'bookings' | 'feedback' | 'chat'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard')
@@ -61,6 +62,8 @@ export default function Home() {
         return <PlayersSection />
       case 'slots':
         return <SlotsSection />
+      case 'calendar':
+        return <CalendarView />
       case 'bookings':
         return <BookingsSection />
       case 'feedback':

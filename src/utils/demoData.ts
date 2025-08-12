@@ -82,9 +82,8 @@ export const initializeDemoData = () => {
   tomorrow.setDate(tomorrow.getDate() + 1)
   const dayAfter = new Date(today)
   dayAfter.setDate(dayAfter.getDate() + 2)
-  
+
   const demoSlots: TimeSlot[] = [
-    // Tomorrow's slots
     {
       id: 'slot_1',
       date: tomorrow.toISOString().split('T')[0],
@@ -109,7 +108,6 @@ export const initializeDemoData = () => {
       location: 'Main Field A',
       description: 'Small group tactical training'
     },
-    // Day after tomorrow's slots
     {
       id: 'slot_3',
       date: dayAfter.toISOString().split('T')[0],
@@ -133,32 +131,7 @@ export const initializeDemoData = () => {
       price: 40,
       location: 'Main Field B',
       description: 'Group fitness and conditioning'
-    },
-    // More slots throughout the month
-    ...Array.from({ length: 12 }, (_, i) => {
-      const futureDate = new Date(today)
-      futureDate.setDate(today.getDate() + i + 3)
-      const isWeekend = futureDate.getDay() === 0 || futureDate.getDay() === 6
-      
-      return {
-        id: `slot_${i + 5}`,
-        date: futureDate.toISOString().split('T')[0],
-        startTime: isWeekend ? '09:00' : '16:00',
-        endTime: isWeekend ? '10:00' : '17:00',
-        type: Math.random() > 0.5 ? 'individual' : 'group' as 'individual' | 'group',
-        maxPlayers: Math.random() > 0.5 ? 1 : Math.floor(Math.random() * 4) + 3,
-        isAvailable: Math.random() > 0.3,
-        price: Math.random() > 0.5 ? 75 : 45,
-        location: ['Main Field A', 'Main Field B', 'Indoor Court'][Math.floor(Math.random() * 3)],
-        description: [
-          'Technical skills training',
-          'Tactical development',
-          'Fitness and conditioning',
-          'Match preparation',
-          'Individual coaching session'
-        ][Math.floor(Math.random() * 5)]
-      }
-    })
+    }
   ]
 
   // Demo Bookings

@@ -1,6 +1,8 @@
 'use client'
 
 import { Coach } from '@/types'
+
+type ActiveTab = 'dashboard' | 'players' | 'slots' | 'calendar' | 'bookings' | 'feedback' | 'chat'
 import { 
   LayoutDashboard, 
   Users, 
@@ -15,12 +17,12 @@ import {
 import { useState } from 'react'
 
 interface NavigationProps {
-  activeTab: string
-  setActiveTab: (tab: string) => void
+  activeTab: ActiveTab
+  setActiveTab: (tab: ActiveTab) => void
   coach: Coach | null
 }
 
-const navItems = [
+const navItems: Array<{ id: ActiveTab; label: string; icon: any }> = [
   { id: 'dashboard', label: 'Your Space', icon: LayoutDashboard },
   { id: 'players', label: 'Squad', icon: Users },
   { id: 'slots', label: 'Time Slots', icon: Calendar },

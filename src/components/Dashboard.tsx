@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react'
+import WeatherWidget from './WeatherWidget'
 import { 
   playersStorage, 
   slotsStorage, 
@@ -99,7 +100,7 @@ export default function Dashboard() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Schedule */}
         <div className="card">
           <div className="flex items-center mb-4">
@@ -184,6 +185,11 @@ export default function Dashboard() {
               })}
             </div>
           )}
+        </div>
+
+        {/* Weather Widget */}
+        <div className="lg:col-span-1">
+          <WeatherWidget />
         </div>
       </div>
 

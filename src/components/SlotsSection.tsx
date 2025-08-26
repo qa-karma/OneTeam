@@ -16,7 +16,7 @@ export default function SlotsSection() {
     type: 'individual' as 'individual' | 'group',
     maxPlayers: 1,
     price: 50,
-    location: 'Main Field',
+    location: 'Truist Soccer Complex',
     description: ''
   })
 
@@ -81,7 +81,7 @@ export default function SlotsSection() {
         type: 'individual',
         maxPlayers: 1,
         price: 50,
-        location: 'Main Field',
+        location: 'Truist Soccer Complex',
         description: ''
       })
     }
@@ -363,14 +363,16 @@ export default function SlotsSection() {
                 <label className="block text-sm font-medium text-secondary-700 mb-2">
                   Location
                 </label>
-                <input
-                  type="text"
-                  required
+                <select
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   className="input-field"
-                  placeholder="e.g., Main Field, Indoor Court"
-                />
+                  required
+                >
+                  <option value="Truist Soccer Complex">Truist Soccer Complex</option>
+                  <option value="Reynolda Soccer Field">Reynolda Soccer Field</option>
+                  <option value="WFU Potit Field">WFU Potit Field</option>
+                </select>
               </div>
 
               <div>

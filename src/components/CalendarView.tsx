@@ -26,10 +26,11 @@ export default function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+  const [sessionTypeFilter, setSessionTypeFilter] = useState<'all' | 'individual' | 'group'>('all')
 
   useEffect(() => {
     loadCalendarEvents()
-  }, [currentDate])
+  }, [currentDate, sessionTypeFilter])
 
   const loadCalendarEvents = () => {
     const slots = slotsStorage.get()
@@ -75,7 +76,18 @@ export default function CalendarView() {
       }
     })
 
-    setEvents(calendarEvents)
+    // Apply session type filter
+    let filteredEvents = calendarEvents
+    if (sessionTypeFilter !== 'all') {
+      filteredEvents = calendarEvents.filter(event => {
+        if (event.slot) {
+          return event.slot.type === sessionTypeFilter
+        }
+        return false
+      })
+    }
+    
+    setEvents(filteredEvents)
   }
 
   const isDateInCurrentMonth = (date: Date) => {
@@ -170,6 +182,52 @@ export default function CalendarView() {
             <ChevronRight size={20} />
           </button>
         </div>
+      </div>
+
+      {/* Session Type Filter */}
+      <div className="card">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-secondary-900">Filter Sessions</h3>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setSessionTypeFilter('all')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                sessionTypeFilter === 'all'
+                  ? 'bg-primary-100 text-primary-700 border border-primary-300'
+                  : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
+              }`}
+            >
+              All Sessions
+            </button>
+            <button
+              onClick={() => setSessionTypeFilter('individual')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                sessionTypeFilter === 'individual'
+                  ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                  : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
+              }`}
+            >
+              1-on-1 Training
+            </button>
+            <button
+              onClick={() => setSessionTypeFilter('group')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                sessionTypeFilter === 'group'
+                  ? 'bg-green-100 text-green-700 border border-green-300'
+                  : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
+              }`}
+            >
+              Group Training
+            </button>
+          </div>
+        </div>
+        {sessionTypeFilter !== 'all' && (
+          <div className="mt-3 p-3 bg-secondary-50 rounded-lg">
+            <p className="text-sm text-secondary-600">
+              Showing {events.length} {sessionTypeFilter === 'individual' ? '1-on-1' : 'group'} session{events.length !== 1 ? 's' : ''} for {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Calendar Grid */}

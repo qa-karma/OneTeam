@@ -1,4 +1,4 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach, ProgressMetric, ProgressGoal, SessionProgress } from '@/types'
 
 const STORAGE_KEYS = {
   PLAYERS: 'oneteam_players',
@@ -7,6 +7,9 @@ const STORAGE_KEYS = {
   FEEDBACK: 'oneteam_feedback',
   MESSAGES: 'oneteam_messages',
   COACH: 'oneteam_coach',
+  PROGRESS_METRICS: 'oneteam_progress_metrics',
+  PROGRESS_GOALS: 'oneteam_progress_goals',
+  SESSION_PROGRESS: 'oneteam_session_progress',
 } as const
 
 // Generic storage functions
@@ -139,6 +142,90 @@ export const messagesStorage = {
 export const coachStorage = {
   get: (): Coach | null => getFromStorage(STORAGE_KEYS.COACH, null),
   save: (coach: Coach) => saveToStorage(STORAGE_KEYS.COACH, coach),
+}
+
+// Progress tracking storage functions
+export const progressMetricsStorage = {
+  get: (): ProgressMetric[] => getFromStorage(STORAGE_KEYS.PROGRESS_METRICS, []),
+  save: (metrics: ProgressMetric[]) => saveToStorage(STORAGE_KEYS.PROGRESS_METRICS, metrics),
+  add: (metric: ProgressMetric) => {
+    const metrics = progressMetricsStorage.get()
+    const updated = [...metrics, metric]
+    progressMetricsStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<ProgressMetric>) => {
+    const metrics = progressMetricsStorage.get()
+    const updated = metrics.map(m => m.id === id ? { ...m, ...updates } : m)
+    progressMetricsStorage.save(updated)
+    return updated
+  },
+  delete: (id: string) => {
+    const metrics = progressMetricsStorage.get()
+    const updated = metrics.filter(m => m.id !== id)
+    progressMetricsStorage.save(updated)
+    return updated
+  }
+}
+
+export const progressGoalsStorage = {
+  get: (): ProgressGoal[] => getFromStorage(STORAGE_KEYS.PROGRESS_GOALS, []),
+  save: (goals: ProgressGoal[]) => saveToStorage(STORAGE_KEYS.PROGRESS_GOALS, goals),
+  add: (goal: ProgressGoal) => {
+    const goals = progressGoalsStorage.get()
+    const updated = [...goals, goal]
+    progressGoalsStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<ProgressGoal>) => {
+    const goals = progressGoalsStorage.get()
+    const updated = goals.map(g => g.id === id ? { ...g, ...updates } : g)
+    progressGoalsStorage.save(updated)
+    return updated
+  },
+  delete: (id: string) => {
+    const goals = progressGoalsStorage.get()
+    const updated = goals.filter(g => g.id !== id)
+    progressGoalsStorage.save(updated)
+    return updated
+  },
+  getByPlayer: (playerId: string): ProgressGoal[] => {
+    const goals = progressGoalsStorage.get()
+    return goals.filter(g => g.playerId === playerId)
+  }
+}
+
+export const sessionProgressStorage = {
+  get: (): SessionProgress[] => getFromStorage(STORAGE_KEYS.SESSION_PROGRESS, []),
+  save: (progress: SessionProgress[]) => saveToStorage(STORAGE_KEYS.SESSION_PROGRESS, progress),
+  add: (progress: SessionProgress) => {
+    const allProgress = sessionProgressStorage.get()
+    const updated = [...allProgress, progress]
+    sessionProgressStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<SessionProgress>) => {
+    const allProgress = sessionProgressStorage.get()
+    const updated = allProgress.map(p => p.id === id ? { ...p, ...updates } : p)
+    sessionProgressStorage.save(updated)
+    return updated
+  },
+  delete: (id: string) => {
+    const allProgress = sessionProgressStorage.get()
+    const updated = allProgress.filter(p => p.id !== id)
+    sessionProgressStorage.save(updated)
+    return updated
+  },
+  getByPlayer: (playerId: string): SessionProgress[] => {
+    const allProgress = sessionProgressStorage.get()
+    return allProgress.filter(p => p.playerId === playerId).sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  },
+  getByBooking: (bookingId: string): SessionProgress[] => {
+    const allProgress = sessionProgressStorage.get()
+    return allProgress.filter(p => p.bookingId === bookingId)
+  }
 }
 
 // Utility functions

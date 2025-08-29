@@ -1,10 +1,13 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, ProgressMetric, ProgressGoal, SessionProgress } from '@/types'
 import { 
   playersStorage, 
   slotsStorage, 
   bookingsStorage, 
   feedbackStorage, 
   messagesStorage,
+  progressMetricsStorage,
+  progressGoalsStorage,
+  sessionProgressStorage,
   generateId 
 } from './localStorage'
 
@@ -252,7 +255,154 @@ export const initializeDemoData = () => {
   feedbackStorage.save(demoFeedback)
   messagesStorage.save(demoMessages)
 
+  // Initialize progress tracking data
+  initializeProgressTrackingData()
+
   console.log('Demo data initialized!')
+}
+
+// Initialize progress tracking demo data
+export const initializeProgressTrackingData = () => {
+  // Only initialize if no data exists
+  if (progressMetricsStorage.get().length > 0) return
+
+  // Demo Progress Metrics
+  const demoProgressMetrics: ProgressMetric[] = [
+    {
+      id: 'metric_1',
+      name: 'Ball Control',
+      category: 'Technical',
+      unit: 'seconds',
+      minValue: 0,
+      maxValue: 60,
+      description: 'Time player can keep ball in air without touching ground'
+    },
+    {
+      id: 'metric_2',
+      name: 'Shooting Accuracy',
+      category: 'Technical',
+      unit: 'percentage',
+      minValue: 0,
+      maxValue: 100,
+      description: 'Percentage of shots on target from 10 attempts'
+    },
+    {
+      id: 'metric_3',
+      name: 'Passing Accuracy',
+      category: 'Technical',
+      unit: 'percentage',
+      minValue: 0,
+      maxValue: 100,
+      description: 'Percentage of successful passes in 20 attempts'
+    },
+    {
+      id: 'metric_4',
+      name: 'Sprint Speed',
+      category: 'Physical',
+      unit: 'seconds',
+      minValue: 0,
+      maxValue: 10,
+      description: 'Time to complete 30-meter sprint'
+    },
+    {
+      id: 'metric_5',
+      name: 'Tactical Awareness',
+      category: 'Tactical',
+      unit: 'score',
+      minValue: 1,
+      maxValue: 5,
+      description: 'Coach rating of player\'s game understanding'
+    },
+    {
+      id: 'metric_6',
+      name: 'Confidence Level',
+      category: 'Mental',
+      unit: 'score',
+      minValue: 1,
+      maxValue: 5,
+      description: 'Player self-assessment of confidence during play'
+    }
+  ]
+
+  // Demo Progress Goals
+  const demoProgressGoals: ProgressGoal[] = [
+    {
+      id: 'goal_1',
+      playerId: 'player_1',
+      metricId: 'metric_1',
+      targetValue: 45,
+      currentValue: 30,
+      deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days
+      status: 'active',
+      notes: 'Emma is working on improving her ball control for better midfield play',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 7 days ago
+    },
+    {
+      id: 'goal_2',
+      playerId: 'player_3',
+      metricId: 'metric_5',
+      targetValue: 5,
+      currentValue: 4,
+      deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 14 days
+      status: 'active',
+      notes: 'Sophie shows great leadership potential, working on tactical communication',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 3 days ago
+    },
+    {
+      id: 'goal_3',
+      playerId: 'player_5',
+      metricId: 'metric_2',
+      targetValue: 80,
+      currentValue: 85,
+      deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days
+      status: 'achieved',
+      notes: 'Ava exceeded her shooting accuracy goal!',
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 14 days ago
+    }
+  ]
+
+  // Demo Session Progress
+  const demoSessionProgress: SessionProgress[] = [
+    {
+      id: 'progress_1',
+      playerId: 'player_1',
+      bookingId: 'booking_completed_1',
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days ago
+      metrics: [
+        { metricId: 'metric_1', value: 30, notes: 'Improved from 25 seconds last week' },
+        { metricId: 'metric_3', value: 75, notes: 'Good passing under pressure' },
+        { metricId: 'metric_6', value: 4, notes: 'More confident with ball at feet' }
+      ],
+      overallRating: 4,
+      coachNotes: 'Emma had a great session today. Her ball control is improving steadily and she\'s showing more confidence in tight spaces. Focus next week on maintaining possession under pressure.',
+      playerSelfAssessment: 4,
+      nextSessionFocus: ['Maintaining possession under pressure', 'Quick decision making', 'First touch control'],
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'progress_2',
+      playerId: 'player_3',
+      bookingId: 'booking_completed_2',
+      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 5 days ago
+      metrics: [
+        { metricId: 'metric_5', value: 4, notes: 'Excellent tactical positioning' },
+        { metricId: 'metric_4', value: 4.2, notes: 'Good recovery speed' },
+        { metricId: 'metric_6', value: 5, notes: 'Very confident and vocal on field' }
+      ],
+      overallRating: 5,
+      coachNotes: 'Sophie was outstanding today. Her tactical awareness and communication skills are developing rapidly. She\'s becoming a natural leader on the field.',
+      playerSelfAssessment: 5,
+      nextSessionFocus: ['Advanced tactical scenarios', 'Leadership development', 'Set piece organization'],
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  ]
+
+  // Save progress tracking demo data
+  progressMetricsStorage.save(demoProgressMetrics)
+  progressGoalsStorage.save(demoProgressGoals)
+  sessionProgressStorage.save(demoSessionProgress)
+
+  console.log('Progress tracking demo data initialized!')
 }
 
 // Add a completed booking for feedback demo

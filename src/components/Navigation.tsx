@@ -16,7 +16,7 @@ import { useState } from 'react'
 
 interface NavigationProps {
   activeTab: string
-  setActiveTab: (tab: string) => void
+  setActiveTab: (tab: 'dashboard' | 'players' | 'slots' | 'calendar' | 'bookings' | 'feedback' | 'progress' | 'chat') => void
   coach: Coach | null
 }
 

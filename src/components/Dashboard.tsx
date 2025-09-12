@@ -8,29 +8,36 @@ import {
   DollarSign,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Target
 } from 'lucide-react'
 import { 
   playersStorage, 
   slotsStorage, 
   bookingsStorage, 
   feedbackStorage,
+  progressGoalsStorage,
+  sessionProgressStorage,
   formatDate,
   formatTime 
 } from '@/utils/localStorage'
-import { Player, TimeSlot, Booking, Feedback } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ProgressGoal, SessionProgress } from '@/types'
 
 export default function Dashboard() {
   const [players, setPlayers] = useState<Player[]>([])
   const [slots, setSlots] = useState<TimeSlot[]>([])
   const [bookings, setBookings] = useState<Booking[]>([])
   const [feedback, setFeedback] = useState<Feedback[]>([])
+  const [goals, setGoals] = useState<ProgressGoal[]>([])
+  const [progress, setProgress] = useState<SessionProgress[]>([])
 
   useEffect(() => {
     setPlayers(playersStorage.get())
     setSlots(slotsStorage.get())
     setBookings(bookingsStorage.get())
     setFeedback(feedbackStorage.get())
+    setGoals(progressGoalsStorage.get())
+    setProgress(sessionProgressStorage.get())
   }, [])
 
   const today = new Date().toISOString().split('T')[0]
@@ -39,6 +46,9 @@ export default function Dashboard() {
     const slot = slots.find(s => s.id === booking.slotId)
     return slot && slot.date >= today && booking.status === 'confirmed'
   }).slice(0, 3)
+
+  const activeGoals = goals.filter(g => g.status === 'active')
+  const recentProgress = progress.slice(0, 3)
 
   const stats = [
     {
@@ -56,16 +66,16 @@ export default function Dashboard() {
       bg: 'bg-green-100'
     },
     {
-      title: 'This Month',
-      value: `$${bookings.filter(b => b.paymentStatus === 'paid').reduce((sum, b) => sum + b.totalAmount, 0)}`,
-      icon: DollarSign,
+      title: 'Active Goals',
+      value: activeGoals.length,
+      icon: Target,
       color: 'text-purple-600',
       bg: 'bg-purple-100'
     },
     {
-      title: 'Feedback Given',
-      value: feedback.length,
-      icon: TrendingUp,
+      title: 'This Month',
+      value: `$${bookings.filter(b => b.paymentStatus === 'paid').reduce((sum, b) => sum + b.totalAmount, 0)}`,
+      icon: DollarSign,
       color: 'text-orange-600',
       bg: 'bg-orange-100'
     }
@@ -190,7 +200,7 @@ export default function Dashboard() {
       {/* Quick Actions */}
       <div className="card">
         <h2 className="text-xl font-semibold text-secondary-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <button className="btn-primary text-center">
             Create New Slot
           </button>
@@ -200,8 +210,60 @@ export default function Dashboard() {
           <button className="btn-accent text-center">
             Send Feedback
           </button>
+          <button className="btn-primary text-center">
+            Track Progress
+          </button>
         </div>
       </div>
+
+      {/* Progress Insights */}
+      {activeGoals.length > 0 && (
+        <div className="card">
+          <div className="flex items-center mb-4">
+            <Target className="text-primary-600 mr-3" size={24} />
+            <h2 className="text-xl font-semibold text-secondary-900">Progress Goals</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {activeGoals.slice(0, 3).map(goal => {
+              const player = players.find(p => p.id === goal.playerId)
+              const progress = Math.min((goal.currentValue / goal.targetValue) * 100, 100)
+              
+              return (
+                <div key={goal.id} className="p-4 border border-secondary-200 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium text-secondary-900">
+                      {player?.name || 'Unknown Player'}
+                    </h3>
+                    <span className="text-sm text-secondary-500">
+                      {Math.round(progress)}%
+                    </span>
+                  </div>
+                  
+                  <div className="w-full bg-secondary-200 rounded-full h-2 mb-2">
+                    <div 
+                      className="bg-primary-500 h-2 rounded-full transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  
+                  <p className="text-sm text-secondary-600">
+                    {goal.notes || 'No notes'}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+          
+          {activeGoals.length > 3 && (
+            <div className="text-center mt-4">
+              <button className="btn-secondary">
+                View All Goals ({activeGoals.length})
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

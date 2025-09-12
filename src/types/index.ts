@@ -73,3 +73,43 @@ export interface Coach {
   experience: number;
   avatar?: string;
 }
+
+// New interfaces for Session Progress Tracking
+export interface ProgressMetric {
+  id: string;
+  name: string;
+  category: 'Technical' | 'Tactical' | 'Physical' | 'Mental';
+  unit: string;
+  minValue: number;
+  maxValue: number;
+  description: string;
+}
+
+export interface ProgressGoal {
+  id: string;
+  playerId: string;
+  metricId: string;
+  targetValue: number;
+  currentValue: number;
+  deadline: string;
+  status: 'active' | 'achieved' | 'missed';
+  notes?: string;
+  createdAt: string;
+}
+
+export interface SessionProgress {
+  id: string;
+  playerId: string;
+  bookingId: string;
+  date: string;
+  metrics: {
+    metricId: string;
+    value: number;
+    notes?: string;
+  }[];
+  overallRating: number; // 1-5
+  coachNotes: string;
+  playerSelfAssessment?: number; // 1-5
+  nextSessionFocus: string[];
+  createdAt: string;
+}

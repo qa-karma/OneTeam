@@ -9,6 +9,7 @@ import {
   BookOpen, 
   MessageSquare, 
   Star,
+  TrendingUp,
   Menu,
   X
 } from 'lucide-react'
@@ -27,6 +28,7 @@ const navItems = [
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
   { id: 'bookings', label: 'Sessions', icon: BookOpen },
   { id: 'feedback', label: 'Progress', icon: Star },
+  { id: 'progress', label: 'Trends', icon: TrendingUp },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
 ]
 

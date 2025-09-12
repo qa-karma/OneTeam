@@ -13,7 +13,9 @@ import {
   AlertCircle,
   Star,
   Users,
-  Trophy
+  Trophy,
+  TrendingDown,
+  Minus
 } from 'lucide-react'
 import { 
   playersStorage, 
@@ -124,6 +126,21 @@ export default function ProgressTrackingSection() {
     const playerGoals = getPlayerGoals(playerId)
     const playerProgress = getPlayerProgress(playerId)
     
+    // Calculate trend for overall ratings
+    let trend = 'stable'
+    if (playerProgress.length >= 3) {
+      const recentRatings = playerProgress.slice(-3).map(p => p.overallRating)
+      const olderRatings = playerProgress.slice(-6, -3).map(p => p.overallRating)
+      
+      if (olderRatings.length >= 3) {
+        const recentAvg = recentRatings.reduce((sum, r) => sum + r, 0) / recentRatings.length
+        const olderAvg = olderRatings.reduce((sum, r) => sum + r, 0) / olderRatings.length
+        
+        if (recentAvg > olderAvg + 0.2) trend = 'improving'
+        else if (recentAvg < olderAvg - 0.2) trend = 'declining'
+      }
+    }
+    
     return {
       totalGoals: playerGoals.length,
       achievedGoals: playerGoals.filter(g => g.status === 'achieved').length,
@@ -131,7 +148,8 @@ export default function ProgressTrackingSection() {
       totalSessions: playerProgress.length,
       averageRating: playerProgress.length > 0 
         ? (playerProgress.reduce((sum, p) => sum + p.overallRating, 0) / playerProgress.length).toFixed(1)
-        : 'N/A'
+        : 'N/A',
+      trend
     }
   }
 
@@ -219,7 +237,8 @@ export default function ProgressTrackingSection() {
                   value: stats.averageRating,
                   icon: Star,
                   color: 'text-purple-600',
-                  bg: 'bg-purple-100'
+                  bg: 'bg-purple-100',
+                  trend: stats.trend
                 }
               ].map((stat, index) => {
                 const Icon = stat.icon
@@ -229,8 +248,29 @@ export default function ProgressTrackingSection() {
                       <div className={`${stat.bg} ${stat.color} p-3 rounded-xl`}>
                         <Icon size={24} />
                       </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-secondary-600">{stat.title}</p>
+                      <div className="ml-4 flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium text-secondary-600">{stat.title}</p>
+                          {stat.trend && (
+                            <div className="flex items-center">
+                              {stat.trend === 'improving' && (
+                                <TrendingUp size={16} className="text-green-600 mr-1" />
+                              )}
+                              {stat.trend === 'declining' && (
+                                <TrendingDown size={16} className="text-red-600 mr-1" />
+                              )}
+                              {stat.trend === 'stable' && (
+                                <Minus size={16} className="text-gray-600 mr-1" />
+                              )}
+                              <span className={`text-xs font-medium ${
+                                stat.trend === 'improving' ? 'text-green-600' :
+                                stat.trend === 'declining' ? 'text-red-600' : 'text-gray-600'
+                              }`}>
+                                {stat.trend}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <p className="text-2xl font-bold text-secondary-900">{stat.value}</p>
                       </div>
                     </div>

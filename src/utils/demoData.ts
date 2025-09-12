@@ -1,10 +1,13 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, ProgressMetric, ProgressGoal, SessionProgress } from '@/types'
 import { 
   playersStorage, 
   slotsStorage, 
   bookingsStorage, 
   feedbackStorage, 
   messagesStorage,
+  progressMetricsStorage,
+  progressGoalsStorage,
+  sessionProgressStorage,
   generateId 
 } from './localStorage'
 
@@ -245,12 +248,177 @@ export const initializeDemoData = () => {
     }
   ]
 
+  // Demo Progress Metrics
+  const demoMetrics: ProgressMetric[] = [
+    {
+      id: 'metric_1',
+      name: 'Shooting Accuracy',
+      category: 'Technical',
+      unit: '%',
+      minValue: 0,
+      maxValue: 100,
+      description: 'Percentage of shots on target'
+    },
+    {
+      id: 'metric_2',
+      name: 'Passing Success Rate',
+      category: 'Technical',
+      unit: '%',
+      minValue: 0,
+      maxValue: 100,
+      description: 'Percentage of successful passes'
+    },
+    {
+      id: 'metric_3',
+      name: 'Sprint Speed',
+      category: 'Physical',
+      unit: 'km/h',
+      minValue: 0,
+      maxValue: 30,
+      description: 'Maximum sprint speed'
+    },
+    {
+      id: 'metric_4',
+      name: 'Ball Control Rating',
+      category: 'Technical',
+      unit: '/10',
+      minValue: 1,
+      maxValue: 10,
+      description: 'Overall ball control ability'
+    }
+  ]
+
+  // Demo Progress Goals
+  const demoGoals: ProgressGoal[] = [
+    {
+      id: 'goal_1',
+      playerId: 'player_1',
+      metricId: 'metric_1',
+      targetValue: 80,
+      currentValue: 65,
+      deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+      status: 'active',
+      notes: 'Focus on shooting technique and accuracy',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 7 days ago
+    },
+    {
+      id: 'goal_2',
+      playerId: 'player_5',
+      metricId: 'metric_2',
+      targetValue: 90,
+      currentValue: 85,
+      deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 21 days from now
+      status: 'active',
+      notes: 'Improve passing accuracy under pressure',
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 14 days ago
+    }
+  ]
+
+  // Demo Session Progress (with trend data for testing)
+  const demoSessionProgress: SessionProgress[] = [
+    // Player 1 - Emma Rodriguez (showing improving trend)
+    {
+      id: 'progress_1',
+      playerId: 'player_1',
+      bookingId: 'booking_1',
+      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 14 days ago
+      metrics: [
+        { metricId: 'metric_1', value: 60, notes: 'Struggled with accuracy' },
+        { metricId: 'metric_4', value: 6, notes: 'Good control' }
+      ],
+      overallRating: 3,
+      coachNotes: 'Good effort but needs work on shooting accuracy',
+      playerSelfAssessment: 3,
+      nextSessionFocus: ['Shooting technique', 'Follow through'],
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'progress_2',
+      playerId: 'player_1',
+      bookingId: 'booking_2',
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days ago
+      metrics: [
+        { metricId: 'metric_1', value: 65, notes: 'Improving accuracy' },
+        { metricId: 'metric_4', value: 7, notes: 'Better control' }
+      ],
+      overallRating: 4,
+      coachNotes: 'Showing improvement in shooting technique',
+      playerSelfAssessment: 4,
+      nextSessionFocus: ['Consistency', 'Power'],
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'progress_3',
+      playerId: 'player_1',
+      bookingId: 'booking_3',
+      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 day ago
+      metrics: [
+        { metricId: 'metric_1', value: 70, notes: 'Much better accuracy' },
+        { metricId: 'metric_4', value: 8, notes: 'Excellent control' }
+      ],
+      overallRating: 5,
+      coachNotes: 'Outstanding session! Shooting accuracy has improved significantly',
+      playerSelfAssessment: 5,
+      nextSessionFocus: ['Advanced techniques', 'Game situations'],
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    // Player 5 - Ava Martinez (showing declining trend)
+    {
+      id: 'progress_4',
+      playerId: 'player_5',
+      bookingId: 'booking_4',
+      date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 21 days ago
+      metrics: [
+        { metricId: 'metric_2', value: 90, notes: 'Excellent passing' },
+        { metricId: 'metric_4', value: 9, notes: 'Outstanding control' }
+      ],
+      overallRating: 5,
+      coachNotes: 'Perfect session, excellent technique',
+      playerSelfAssessment: 5,
+      nextSessionFocus: ['Maintain level', 'Advanced tactics'],
+      createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'progress_5',
+      playerId: 'player_5',
+      bookingId: 'booking_5',
+      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 14 days ago
+      metrics: [
+        { metricId: 'metric_2', value: 88, notes: 'Good passing' },
+        { metricId: 'metric_4', value: 8, notes: 'Good control' }
+      ],
+      overallRating: 4,
+      coachNotes: 'Good session but not at previous level',
+      playerSelfAssessment: 4,
+      nextSessionFocus: ['Focus', 'Consistency'],
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'progress_6',
+      playerId: 'player_5',
+      bookingId: 'booking_6',
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days ago
+      metrics: [
+        { metricId: 'metric_2', value: 85, notes: 'Passing needs work' },
+        { metricId: 'metric_4', value: 7, notes: 'Control declining' }
+      ],
+      overallRating: 3,
+      coachNotes: 'Struggling with focus and technique',
+      playerSelfAssessment: 3,
+      nextSessionFocus: ['Back to basics', 'Mental focus'],
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  ]
+
   // Save demo data
   playersStorage.save(demoPlayers)
   slotsStorage.save(demoSlots)
   bookingsStorage.save(demoBookings)
   feedbackStorage.save(demoFeedback)
   messagesStorage.save(demoMessages)
+  progressMetricsStorage.save(demoMetrics)
+  progressGoalsStorage.save(demoGoals)
+  sessionProgressStorage.save(demoSessionProgress)
 
   console.log('Demo data initialized!')
 }

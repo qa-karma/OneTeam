@@ -9,6 +9,8 @@ import {
   BookOpen, 
   MessageSquare, 
   Star,
+  TrendingUp,
+  CheckCircle,
   Menu,
   X
 } from 'lucide-react'
@@ -26,7 +28,9 @@ const navItems = [
   { id: 'slots', label: 'Time Slots', icon: Calendar },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
   { id: 'bookings', label: 'Sessions', icon: BookOpen },
+  { id: 'attendance', label: 'Attendance', icon: CheckCircle },
   { id: 'feedback', label: 'Progress', icon: Star },
+  { id: 'progress', label: 'Trends', icon: TrendingUp },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
 ]
 

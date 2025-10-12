@@ -1,4 +1,4 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach, ProgressMetric, ProgressGoal, SessionProgress, SessionAttendance } from '@/types'
 
 const STORAGE_KEYS = {
   PLAYERS: 'oneteam_players',
@@ -7,6 +7,10 @@ const STORAGE_KEYS = {
   FEEDBACK: 'oneteam_feedback',
   MESSAGES: 'oneteam_messages',
   COACH: 'oneteam_coach',
+  PROGRESS_METRICS: 'oneteam_progress_metrics',
+  PROGRESS_GOALS: 'oneteam_progress_goals',
+  SESSION_PROGRESS: 'oneteam_session_progress',
+  SESSION_ATTENDANCE: 'oneteam_session_attendance',
 } as const
 
 // Generic storage functions
@@ -161,4 +165,67 @@ export const formatTime = (time: string): string => {
   const ampm = hour >= 12 ? 'PM' : 'AM'
   const displayHour = hour % 12 || 12
   return `${displayHour}:${minutes} ${ampm}`
+}
+
+// Progress tracking storage functions
+export const progressMetricsStorage = {
+  get: (): ProgressMetric[] => getFromStorage(STORAGE_KEYS.PROGRESS_METRICS, []),
+  save: (metrics: ProgressMetric[]) => saveToStorage(STORAGE_KEYS.PROGRESS_METRICS, metrics),
+  add: (metric: ProgressMetric) => {
+    const metrics = progressMetricsStorage.get()
+    const updated = [...metrics, metric]
+    progressMetricsStorage.save(updated)
+    return updated
+  }
+}
+
+export const progressGoalsStorage = {
+  get: (): ProgressGoal[] => getFromStorage(STORAGE_KEYS.PROGRESS_GOALS, []),
+  save: (goals: ProgressGoal[]) => saveToStorage(STORAGE_KEYS.PROGRESS_GOALS, goals),
+  add: (goal: ProgressGoal) => {
+    const goals = progressGoalsStorage.get()
+    const updated = [...goals, goal]
+    progressGoalsStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<ProgressGoal>) => {
+    const goals = progressGoalsStorage.get()
+    const updated = goals.map(g => g.id === id ? { ...g, ...updates } : g)
+    progressGoalsStorage.save(updated)
+    return updated
+  }
+}
+
+export const sessionProgressStorage = {
+  get: (): SessionProgress[] => getFromStorage(STORAGE_KEYS.SESSION_PROGRESS, []),
+  save: (progress: SessionProgress[]) => saveToStorage(STORAGE_KEYS.SESSION_PROGRESS, progress),
+  add: (progress: SessionProgress) => {
+    const allProgress = sessionProgressStorage.get()
+    const updated = [...allProgress, progress]
+    sessionProgressStorage.save(updated)
+    return updated
+  }
+}
+
+export const attendanceStorage = {
+  get: (): SessionAttendance[] => getFromStorage(STORAGE_KEYS.SESSION_ATTENDANCE, []),
+  save: (attendance: SessionAttendance[]) => saveToStorage(STORAGE_KEYS.SESSION_ATTENDANCE, attendance),
+  add: (attendance: SessionAttendance) => {
+    const allAttendance = attendanceStorage.get()
+    const updated = [...allAttendance, attendance]
+    attendanceStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<SessionAttendance>) => {
+    const allAttendance = attendanceStorage.get()
+    const updated = allAttendance.map(a => a.id === id ? { ...a, ...updates } : a)
+    attendanceStorage.save(updated)
+    return updated
+  },
+  getByBooking: (bookingId: string): SessionAttendance[] => {
+    return attendanceStorage.get().filter(a => a.bookingId === bookingId)
+  },
+  getByPlayer: (playerId: string): SessionAttendance[] => {
+    return attendanceStorage.get().filter(a => a.playerId === playerId)
+  }
 }

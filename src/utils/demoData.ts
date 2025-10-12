@@ -1,4 +1,4 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage, ProgressMetric, ProgressGoal, SessionProgress } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, ProgressMetric, ProgressGoal, SessionProgress, SessionAttendance } from '@/types'
 import { 
   playersStorage, 
   slotsStorage, 
@@ -8,6 +8,7 @@ import {
   progressMetricsStorage,
   progressGoalsStorage,
   sessionProgressStorage,
+  attendanceStorage,
   generateId 
 } from './localStorage'
 
@@ -410,6 +411,112 @@ export const initializeDemoData = () => {
     }
   ]
 
+  // Demo Attendance Data
+  const demoAttendance: SessionAttendance[] = [
+    // Player 1 - Emma Rodriguez (Great attendance)
+    {
+      id: 'attendance_1',
+      bookingId: 'booking_1',
+      playerId: 'player_1',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_2',
+      bookingId: 'booking_2',
+      playerId: 'player_1',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_3',
+      bookingId: 'booking_3',
+      playerId: 'player_1',
+      status: 'late',
+      arrivalTime: '10:15',
+      minutesLate: 15,
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      notes: 'Traffic delay'
+    },
+    // Player 2 - Jackson Chen (Good attendance with one absence)
+    {
+      id: 'attendance_4',
+      bookingId: 'booking_4',
+      playerId: 'player_2',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_5',
+      bookingId: 'booking_5',
+      playerId: 'player_2',
+      status: 'absent',
+      reason: 'Sick',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_6',
+      bookingId: 'booking_6',
+      playerId: 'player_2',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    // Player 3 - Sophie Williams (Consistent attendance)
+    {
+      id: 'attendance_7',
+      bookingId: 'booking_7',
+      playerId: 'player_3',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_8',
+      bookingId: 'booking_8',
+      playerId: 'player_3',
+      status: 'present',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_9',
+      bookingId: 'booking_9',
+      playerId: 'player_3',
+      status: 'late',
+      arrivalTime: '14:10',
+      minutesLate: 10,
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      notes: 'School ran late'
+    },
+    // Player 4 - Marcus Thompson (Some attendance issues)
+    {
+      id: 'attendance_10',
+      bookingId: 'booking_10',
+      playerId: 'player_4',
+      status: 'late',
+      arrivalTime: '09:25',
+      minutesLate: 25,
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: 'attendance_11',
+      bookingId: 'booking_11',
+      playerId: 'player_4',
+      status: 'absent',
+      reason: 'Family emergency',
+      markedBy: 'Coach John',
+      markedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  ]
+
   // Save demo data
   playersStorage.save(demoPlayers)
   slotsStorage.save(demoSlots)
@@ -419,6 +526,7 @@ export const initializeDemoData = () => {
   progressMetricsStorage.save(demoMetrics)
   progressGoalsStorage.save(demoGoals)
   sessionProgressStorage.save(demoSessionProgress)
+  attendanceStorage.save(demoAttendance)
 
   console.log('Demo data initialized!')
 }

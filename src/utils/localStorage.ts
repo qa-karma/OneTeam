@@ -1,4 +1,4 @@
-import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach, ProgressMetric, ProgressGoal, SessionProgress } from '@/types'
+import { Player, TimeSlot, Booking, Feedback, ChatMessage, Coach, ProgressMetric, ProgressGoal, SessionProgress, SessionAttendance } from '@/types'
 
 const STORAGE_KEYS = {
   PLAYERS: 'oneteam_players',
@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   PROGRESS_METRICS: 'oneteam_progress_metrics',
   PROGRESS_GOALS: 'oneteam_progress_goals',
   SESSION_PROGRESS: 'oneteam_session_progress',
+  SESSION_ATTENDANCE: 'oneteam_session_attendance',
 } as const
 
 // Generic storage functions
@@ -203,5 +204,28 @@ export const sessionProgressStorage = {
     const updated = [...allProgress, progress]
     sessionProgressStorage.save(updated)
     return updated
+  }
+}
+
+export const attendanceStorage = {
+  get: (): SessionAttendance[] => getFromStorage(STORAGE_KEYS.SESSION_ATTENDANCE, []),
+  save: (attendance: SessionAttendance[]) => saveToStorage(STORAGE_KEYS.SESSION_ATTENDANCE, attendance),
+  add: (attendance: SessionAttendance) => {
+    const allAttendance = attendanceStorage.get()
+    const updated = [...allAttendance, attendance]
+    attendanceStorage.save(updated)
+    return updated
+  },
+  update: (id: string, updates: Partial<SessionAttendance>) => {
+    const allAttendance = attendanceStorage.get()
+    const updated = allAttendance.map(a => a.id === id ? { ...a, ...updates } : a)
+    attendanceStorage.save(updated)
+    return updated
+  },
+  getByBooking: (bookingId: string): SessionAttendance[] => {
+    return attendanceStorage.get().filter(a => a.bookingId === bookingId)
+  },
+  getByPlayer: (playerId: string): SessionAttendance[] => {
+    return attendanceStorage.get().filter(a => a.playerId === playerId)
   }
 }

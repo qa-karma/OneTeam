@@ -113,3 +113,16 @@ export interface SessionProgress {
   nextSessionFocus: string[];
   createdAt: string;
 }
+
+export interface SessionAttendance {
+  id: string;
+  bookingId: string;
+  playerId: string;
+  status: 'present' | 'absent' | 'late';
+  arrivalTime?: string; // For late arrivals
+  minutesLate?: number; // For late arrivals
+  reason?: string; // For absences
+  markedBy: string; // Coach who marked attendance
+  markedAt: string;
+  notes?: string;
+}

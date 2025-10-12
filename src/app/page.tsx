@@ -7,6 +7,7 @@ import PlayersSection from '@/components/PlayersSection'
 import SlotsSection from '@/components/SlotsSection'
 import CalendarView from '@/components/CalendarView'
 import BookingsSection from '@/components/BookingsSection'
+import AttendanceSection from '@/components/AttendanceSection'
 import FeedbackSection from '@/components/FeedbackSection'
 import ProgressTrackingSection from '@/components/ProgressTrackingSection'
 import ChatSection from '@/components/ChatSection'
@@ -14,7 +15,7 @@ import { coachStorage } from '@/utils/localStorage'
 import { initializeDemoData, addCompletedBookingForFeedback } from '@/utils/demoData'
 import { Coach } from '@/types'
 
-type ActiveTab = 'dashboard' | 'players' | 'slots' | 'calendar' | 'bookings' | 'feedback' | 'progress' | 'chat'
+type ActiveTab = 'dashboard' | 'players' | 'slots' | 'calendar' | 'bookings' | 'attendance' | 'feedback' | 'progress' | 'chat'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard')
@@ -67,6 +68,8 @@ export default function Home() {
         return <CalendarView />
       case 'bookings':
         return <BookingsSection />
+      case 'attendance':
+        return <AttendanceSection />
       case 'feedback':
         return <FeedbackSection />
       case 'progress':
